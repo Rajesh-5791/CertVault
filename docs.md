@@ -120,7 +120,7 @@ GET /api/me/certs/searchCert?authKey=1938205A3G&employeeId=90128&certId=102374
 - *Query Parameters:*
   - authKey: Authentication key of the user.
   - employeeId: ID of the employee.
-- *Request Payload:* None
+- *Request Payload:* JSON object containing the new certificate data.
 - *Response Payload:* A JSON object containing a response code and a message indicating the result of the insert operation.
 
 *Example:*
