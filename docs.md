@@ -2,145 +2,216 @@
 
 ## 1. List Certs
 - *Method:* GET
-- *Endpoint:* /api/me/certs
-- *Query Parameters:*
-  - authKey: Authentication key of the user.
-  - employeeId: ID of the employee.
-  - sort: Sort order for the certificates (optional).
+- *Endpoint:* /api/:employeeId/certs
+- *Query Parameters:* (Optional)
 - *Request Payload:* None
-- *Response Payload:* An array of JSON objects, where each object represents a certificate.
+- *Response Payload:* 
+  - Success: An array of JSON objects, where each object represents a certificate.
+  - Error: A JSON object having error details.
 
 *Example:*
 
 *Request:*
-GET /api/me/certs?authKey=1938205A3G&employeeId=90128&sort=asc
+GET /api/235771/certs
 
 *Response Payload:* 
-`[
-  {
-    "Certificate Id": "102374",
+- Success: `{
+  "data": [{
+    "CertificateId": "102374",
+    "attributes": {
     "Name": "Google Analytics Individual Qualification",
-    "Issuing Organization": "Google",
-    "Issue Date": "10-03-2024",
-    "Expiration Date": "10-03-2029",
-    "Credential Id": "GAIQ789012",
-    "Credential Url": "analytics.google.com"
+    "IssuingOrganization": "Google",
+    "IssueDate": "10-03-2024",
+    "ExpirationDate": "10-03-2029",
+    "CredentialId": "GAIQ789012",
+    "CredentialUrl": "analytics.google.com"
+    }
   },
   {
-    "Certificate Id": "102375",
-    "Name": "AWS Certified Solutions Architect - Associate",
-    "Issuing Organization": "Amazon Web Services",
-    "Issue Date": "15-05-2023",
-    "Expiration Date": "15-05-2028",
-    "Credential Id": "AWS789012",
-    "Credential Url": "aws.amazon.com"
+    "CertificateId": "102375",
+    "attributes": {
+      "Name": "AWS Certified Solutions Architect - Associate",
+      "IssuingOrganization": "Amazon Web Services",
+      "IssueDate": "15-05-2023",
+      "ExpirationDate": "15-05-2028",
+      "CredentialId": "AWS789012",
+      "CredentialUrl": "aws.amazon.com"
+    }
+  }]
+}`
+- Error: `{
+  "status": "error",
+  "statusCode": 404,
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "The requested resource was not found."
   }
-]`
+}`
 
 
-## 2. Edit Certs
+## 2. Edit Cert
 - *Method:* PUT/PATCH
-- *Endpoint:* /api/me/certs/editCert
-- *Query Parameters:*
-  - authKey: Authentication key of the user.
-  - employeeId: ID of the employee.
-  - certId: ID of the certificate being edited.
-- *Request Payload:* JSON object containing the updated data for the certificate.
-- *Response Payload:* A JSON object containing a response code and a message indicating the result of the edit operation.
+- *Endpoint:* /api/:employeeId/certs/:certId
+- *Query Parameters:* None
+- *Request Payload:* A JSON object containing the updated data for the certificate.
+- *Response Payload:* 
+  - Success: A JSON object having newly edited cert details.
+  - Error: A JSON object having error details.
 
 *Example:*
 
 *Request:*
-PUT /api/me/certs/editCert?authKey=1938205A3G&employeeId=90128&certId=102374
+PUT /api/235771/certs/102374
 
 *Request Payload:*
 `{
-  "Expiration Date": "15-04-2028"
+  "data": {
+  "Expiration Date": "15-04-2028",
+  "IssueDate": "13-09-2018"
+  }
 }`
 
 *Response Payload:*
-`{
-  "response-code": "200",
-  "message": "Certificate edited successfully"
+- Success: `{
+  "data": {
+    "CertificateId": "102374",
+    "attributes": {
+      "Name": "AWS Certified Solutions Architect - Associate",
+      "IssuingOrganization": "Amazon Web Services",
+      "IssueDate": "15-05-2023",
+      "ExpirationDate": "15-05-2028",
+      "CredentialId": "AWS789012",
+      "CredentialUrl": "aws.amazon.com"
+    }
+  }
+}`
+- Error: `{
+  "status": "error",
+  "statusCode": 404,
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "The requested resource was not found."
+  }
 }`
 
 
-## 3. Delete Certs
+## 3. Delete Cert
 - *Method:* DELETE
-- *Endpoint:* /api/me/certs/deleteCert
-- *Query Parameters:*
-  - authKey: Authentication key of the user.
-  - employeeId: ID of the employee.
-  - certId: ID of the certificate being deleted.
+- *Endpoint:* /api/:employeeId/certs/:certId
+- *Query Parameters:* None
 - *Request Payload:* None
-- *Response Payload:* A JSON object containing a response code and a message indicating the result of the delete operation.
+- *Response Payload:* 
+  - Success: A JSON object containing last deleted cert details.
+  - Error: A JSON object having error details. 
 
 *Example:*
 
 *Request:*
-DELETE /api/me/certs/deleteCert?authKey=1938205A3G&employeeId=90128&certId=102374
+DELETE /api/145602/certs/102374
 
 *Response Payload:*
-`{
-  "response-code": "200",
-  "message": "Certificate deleted successfully"
+- Success: `{
+  "data": {
+    "CertificateId": "102374",
+    "attributes": {
+      "Name": "AWS Certified Solutions Architect - Associate",
+      "IssuingOrganization": "Amazon Web Services",
+      "IssueDate": "15-05-2023",
+      "ExpirationDate": "15-05-2028",
+      "CredentialId": "AWS789012",
+      "CredentialUrl": "aws.amazon.com"
+    }
+  }
+}`
+- Error: `{
+  "status": "error",
+  "statusCode": 404,
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "The requested resource was not found."
+  }
 }`
 
 
-## 4. Search Certs
+## 4. Search Cert
 - *Method:* GET
-- *Endpoint:* /api/me/certs/searchCert
-- *Query Parameters:*
-  - authKey: Authentication key of the user.
-  - employeeId: ID of the employee.
-  - certId: ID of the certificate being searched.
+- *Endpoint:* /api/:employeeId/certs/:certId
+- *Query Parameters:* None
 - *Request Payload:* None
-- *Response Payload:* A JSON object containing a certificate data.
+- *Response Payload:* 
+  - Success: A JSON object containing a certificate details.
+  - Error: A JSON object containg error details.
 
 *Example:*
 
 *Request:*
-GET /api/me/certs/searchCert?authKey=1938205A3G&employeeId=90128&certId=102374
+GET /api/562901/certs/searchCert/102374
 
 *Response Payload:*
-`{
+- Success: `{
+  "data": {
     "Certificate Id": "102374",
+    "attributes": {
     "Name": "Google Analytics Individual Qualification",
     "Issuing Organization": "Google",
     "Issue Date": "10-03-2024",
     "Expiration Date": "10-03-2029",
     "Credential Id": "GAIQ789012",
     "Credential Url": "analytics.google.com"
-  }`
+    }
+  }
+}`
+- Error: `{
+  "status": "error",
+  "statusCode": 404,
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "The requested resource was not found."
+  }
+}`
 
 
-## 5. Insert Certs
+## 5. Insert Cert
 - *Method:* POST
-- *Endpoint:* /api/me/certs/insertCert
-- *Query Parameters:*
-  - authKey: Authentication key of the user.
-  - employeeId: ID of the employee.
-- *Request Payload:* JSON object containing the new certificate data.
-- *Response Payload:* A JSON object containing a response code and a message indicating the result of the insert operation.
+- *Endpoint:* /api/:employeeId/certs
+- *Query Parameters:* None
+- *Request Payload:* A JSON object containing the new certificate data.
+- *Response Payload:* 
+  - Success: A JSON object having newly inserted cert details.
+  - Error: A JSON object having error details.
 
 *Example:*
 
 *Request:*
-POST /api/me/certs/insertCert?authKey=1938205A3G&employeeId=90128
+POST /api/562901/certs
 
 *Request Payload:*
 `{
+    "data": {
     "Certificate Id": "102374",
-    "Name": "Google Analytics Individual Qualification",
-    "Issuing Organization": "Google",
-    "Issue Date": "10-03-2024",
-    "Expiration Date": "10-03-2029",
-    "Credential Id": "GAIQ789012",
-    "Credential Url": "analytics.google.com"
-  }`
+    "attributes": {
+      "Name": "Google Analytics Individual Qualification",
+      "Issuing Organization": "Google",
+      "Issue Date": "10-03-2024",
+      "Expiration Date": "10-03-2029",
+      "Credential Id": "GAIQ789012",
+      "Credential Url": "analytics.google.com"
+    }
+  }
+}`
 
 *Response Payload:*
-`{
-  "response-code": "200",
-  "message": "Certificate inserted successfully"
+- Success: `{
+    "data": {
+      "Certificate Id": "102374",
+      "attributes": { ... }
+    }
+  }`
+- Error: `{
+  "status": "error",
+  "statusCode": 404,
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "The requested resource was not found."
+  }
 }`
