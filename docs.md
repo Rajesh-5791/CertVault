@@ -40,7 +40,7 @@ GET /api/235771/certs
 
 
 ## 2. Edit Cert
-- *Method:* PUT/PATCH
+- *Method:* POST
 - *Endpoint:* /api/:employeeId/certs/:certId
 - *Query Parameters:* None
 - *Request Payload:* A JSON object containing the updated data for the certificate.
@@ -51,7 +51,7 @@ GET /api/235771/certs
 *Example:*
 
 *Request:*
-PUT /api/235771/certs/102374
+POST /api/235771/certs/102374
 
 *Request Payload:*
 `{
