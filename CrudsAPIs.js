@@ -29,7 +29,7 @@ async function executeQueryAndRespond(res, query, values, employeeId, certId, su
         if (!certificate) {
             return res.status(500).json({ error: errorMessage });
         }
-        return res.status(201).json({ message: successMessage, certificate });
+        return res.status(200).json({ message: successMessage, certificate });
     } catch (error) {
         return res.status(500).json({ error: errorMessage });
     }
@@ -69,10 +69,16 @@ app.route('/api/:employeeId/certs/:certId')
 .delete(async (req, res) => {
     const { employeeId, certId } = req.params;
     const query = 'DELETE FROM Certs WHERE employeeId = ? AND certificateId = ?';
-    const values = [employeeId, certId];
-    const errorMessage = 'Error deleting certificate';
-    const successMessage = 'Certificate deleted successfully';
-    await executeQueryAndRespond(res, query, values, employeeId, certId, successMessage, errorMessage);
+    try {
+        await db.run(query, [employeeId, certId]);
+        const certificate = await getCertificate(employeeId, certId);
+        if (!certificate) {
+            return res.status(200).json({ success: true, message: 'Certificate deleted successfully.'});
+        }            
+        return res.status(404).json({ success: false, message: 'Certificate not deleted.' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error deleting certificate' });
+    }
 });
 
 app.listen(PORT, () => {
