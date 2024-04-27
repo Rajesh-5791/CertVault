@@ -1,70 +1,78 @@
 // Cruds APIs
 
 const express = require('express');
-const bodyParser = require('body-parser');
+const sqlite = require('sqlite');
+const sqlite3 = require('sqlite3');
 
 const app = express();
+app.use(express.json());
 const PORT = 5791;
-app.use(bodyParser.json());
+let db;
 
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('CertsVault.db');
+(async () => {
+    db = await sqlite.open({
+        filename: 'D:/Training/WebDevelopment/Project/CertsProject/CertsVault.db',
+        driver: sqlite3.Database
+    });
+})();
 
-const validateAuthKey = async (req, res, next) => {
-    const { authKey, employeeId } = req.query;
-    if (!authKey || !employeeId) {
-        return res.status(400).json({ error: "Authentication key and EmployeeId are required." });
-    }
+async function getCertificate(employeeId, certificateId) {
+    const query = 'SELECT * FROM Certs WHERE employeeId = ? AND certificateId = ?';
+    const certificate = await db.get(query, [employeeId, certificateId]);
+    return certificate;
+}
+
+async function executeQueryAndRespond(res, query, values, employeeId, certId, successMessage, errorMessage) {
     try {
-        const row = await new Promise((resolve, reject) => {
-            db.get('SELECT * FROM Employee WHERE EmployeeId = ? AND AuthKey = ?', [employeeId, authKey], (err, row) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(row);
-                }
-            });
-        });
-        if (!row) {
-            return res.status(401).json({ error: "Invalid authentication key or employee ID" });
+        await db.run(query, values);
+        const certificate = await getCertificate(employeeId, certId);
+        if (!certificate) {
+            return res.status(500).json({ error: errorMessage });
         }
-        next();
-    } catch (err) {
-        console.error(err.message);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(201).json({ message: successMessage, certificate });
+    } catch (error) {
+        return res.status(500).json({ error: errorMessage });
     }
-};
+}
 
-app.post('/api/me/certs/insertCert', validateAuthKey, async (req, res) => {
-    const { employeeId } = req.query;
-    const certificateData = req.body;
-    if (!certificateData) {
-        return res.status(400).json({ error: "Certificate data is required." });
-    }
+app.route('/api/:employeeId/certs')
+.put(async (req, res) => {
+    const { employeeId } = req.params;
+    const { certId, courseName, issuingOrganization, issueDate, expirationDate, credentialId, credentialUrl } = req.body;
+    const values = [employeeId, certId, courseName, issuingOrganization, issueDate, expirationDate, credentialId, credentialUrl];
+    const query = 'INSERT INTO Certs VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const errorMessage = 'Error inserting certificate';
+    const successMessage = 'Certificate inserted successfully';
+    await executeQueryAndRespond(res, query, values, employeeId, certId, successMessage, errorMessage);
+})
+.get(async (req, res) => {
     try {
-        await db.run(`INSERT INTO Certs VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [employeeId, certificateData['CertificateId'], certificateData['CourseName'], certificateData['IssuingOrganization'], certificateData['IssueDate'], certificateData['ExpirationDate'], certificateData['CredentialId'], certificateData['CredentialUrl']]);
-        return res.status(200).json({ "response-code": "200", "message": "Certificate inserted successfully" });
-    } catch (err) {
-        console.error(err.message);
-        return res.status(500).json({ error: "Internal server error" });
+        const { employeeId } = req.params;
+        const query = 'SELECT * FROM Certs WHERE employeeId = ?';
+        const allCertificates = await db.all(query, [employeeId]);
+        return res.status(200).json({ message: 'Retrieved all certificates successfully', allCertificates });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error retrieving certificates' });
     }
 });
 
-app.get('/api/me/certs', validateAuthKey, (req, res) => {
-    res.send('Get all certificates.');
-});
-
-app.get('/api/me/certs/searchCert', validateAuthKey, (req, res) => {
-    res.send('Search certificate.');
-});
-
-app.put('/api/me/certs/editCert', validateAuthKey, (req, res) => {
-    res.send('Edit certificate.');
-});
-
-app.delete('/api/me/certs/deleteCert', validateAuthKey, (req, res) => {
-    res.send('Delete certificate.');
+app.route('/api/:employeeId/certs/:certId')
+.post(async (req, res) => {
+    const { employeeId, certId } = req.params;
+    const { courseName, issuingOrganization, issueDate, expirationDate, credentialId, credentialUrl } = req.body;
+    const query = 'UPDATE Certs SET courseName = ?, issuingOrganization = ?, issueDate = ?, expirationDate = ?, credentialId = ?, credentialUrl = ? WHERE employeeId = ? AND certificateId = ?';
+    const values = [courseName, issuingOrganization, issueDate, expirationDate, credentialId, credentialUrl, employeeId, certId];
+    const errorMessage = 'Error updating certificate';
+    const successMessage = 'Certificate updated successfully';
+    await executeQueryAndRespond(res, query, values, employeeId, certId, successMessage, errorMessage);
+})    
+.delete(async (req, res) => {
+    const { employeeId, certId } = req.params;
+    const query = 'DELETE FROM Certs WHERE employeeId = ? AND certificateId = ?';
+    const values = [employeeId, certId];
+    const errorMessage = 'Error deleting certificate';
+    const successMessage = 'Certificate deleted successfully';
+    await executeQueryAndRespond(res, query, values, employeeId, certId, successMessage, errorMessage);
 });
 
 app.listen(PORT, () => {
