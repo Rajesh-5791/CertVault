@@ -72,9 +72,9 @@ app.route('/api/:employeeId/certs')
         return await handleResponse(res, result, 'insertCertificate', certificate);
     })
     .get(async (req, res) => {
-        let employeeId = req.params.employeeId;
-        let sortOrder = req.query.sort || "expirationDate";
-        let sortBy = req.query.sortBy || "ASC";
+        const employeeId = req.params.employeeId;
+        const sortOrder = req.query.sort || "expirationDate";
+        const sortBy = req.query.sortBy || "ASC";
         const values = { employeeId, sortBy, sortOrder };
         const allCertificates = await getAllCertificates(values);
         return await handleResponse(res, allCertificates.length, 'getAllCertificates', allCertificates);
