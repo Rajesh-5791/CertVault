@@ -1,7 +1,7 @@
 // CRUD APIs implementation
 
 import express from 'express';
-import { openDatabase, getCertificate, insertCertificate, getAllCertificates, updateCertificate, deleteCertificate } from './dbOperations.mjs';
+import { openDatabase, getCertificate, insertCertificate, getAllCertificates, updateCertificate, deleteCertificate } from './dbOperations.js';
 
 const app = express();
 app.use(express.json());
@@ -73,8 +73,8 @@ app.route('/api/:employeeId/certs')
     })
     .get(async (req, res) => {
         const employeeId = req.params.employeeId;
-        const sortOrder = req.query.sort || "expirationDate";
-        const sortBy = req.query.sortBy || "ASC";
+        const sortOrder = req.query.sort || "ASC";
+        const sortBy = req.query.sortBy || "expirationDate";
         const values = { employeeId, sortBy, sortOrder };
         const allCertificates = await getAllCertificates(values);
         return await handleResponse(res, allCertificates.length, 'getAllCertificates', allCertificates);
