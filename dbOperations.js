@@ -1,4 +1,4 @@
-// Database operations
+// CRUD database operations
 
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
@@ -6,7 +6,7 @@ let db;
 
 export async function openDatabase() {
     db = await open({
-        filename: 'D:/Training/WebDevelopment/Project/CertsVault.db',
+        filename: 'D:/Training/Project/CertsVault.db',
         driver: sqlite3.Database
     });
 }
