@@ -3,7 +3,7 @@
 ## 1. List Certs
 - *Method:* GET
 - *Endpoint:* /api/:employeeId/certs
-- *Query Parameters:* (Optional)
+- *Query Parameters:* ?sort=(ASC/DESC)&sortBy=(expirationDate/issueDate)
 - *Request Payload:* None
 - *Response Payload:* 
   - Success: An array of JSON objects, where each object represents a certificate.
@@ -12,11 +12,11 @@
 *Example:*
 
 *Request:*
-GET /api/235771/certs
+GET /api/235771/certs?sort=DESC
 
 *Response Payload:* 
 - Success: `[{
-    "certificateId": "102374",
+    "certificateId": "102375",
     "courseName": "Google Analytics Individual Qualification",
     "issuingOrganization": "Google",
     "issueDate": "10-03-2024",
@@ -25,13 +25,13 @@ GET /api/235771/certs
     "credentialUrl": "analytics.google.com"
   },
   {
-    "certificateId": "102375",
-      "courseName": "AWS Certified Solutions Architect - Associate",
-      "issuingOrganization": "Amazon Web Services",
-      "issueDate": "15-05-2023",
-      "expirationDate": "15-05-2028",
-      "credentialId": "AWS789012",
-      "credentialUrl": "aws.amazon.com"
+    "certificateId": "102374",
+    "courseName": "AWS Certified Solutions Architect - Associate",
+    "issuingOrganization": "Amazon Web Services",
+    "issueDate": "15-05-2023",
+    "expirationDate": "15-05-2028",
+    "credentialId": "AWS789012",
+    "credentialUrl": "aws.amazon.com"
   }]`
 - Error: `{
   "statusCode": 404,
