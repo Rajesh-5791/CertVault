@@ -103,6 +103,7 @@ const addCertificate = async (formData) => {
 };
 
 const populate = (certificate) => {
+    document.getElementById('certId').value = certificate.certificateId;
     document.getElementById('courseName').value = certificate.courseName;
     document.getElementById('issuingOrganization').value = certificate.issuingOrganization;
     document.getElementById('issueDate').value = certificate.issueDate;
